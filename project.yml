@@ -1,0 +1,36 @@
+name: HandReplayRecorder
+options:
+  bundleIdPrefix: com.visionone
+  deploymentTarget:
+    visionOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    DEVELOPMENT_TEAM: ""
+packages:
+  RealityKitContent:
+    path: Packages/RealityKitContent
+targets:
+  HandReplayRecorder:
+    type: application
+    platform: visionOS
+    sources:
+      - HandReplayRecorder
+    dependencies:
+      - package: RealityKitContent
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.visionone.HandReplayRecorder
+        INFOPLIST_FILE: HandReplayRecorder/Info.plist
+        TARGETED_DEVICE_FAMILY: 7
+        SUPPORTED_PLATFORMS: "xros xrsimulator"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+schemes:
+  HandReplayRecorder:
+    build:
+      targets:
+        HandReplayRecorder: all
+    run:
+      config: Debug
+    archive:
+      config: Release

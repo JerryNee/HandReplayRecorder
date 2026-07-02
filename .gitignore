@@ -1,0 +1,12 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.moved-aside
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.lpvt-handmotion.json
+*.usda
+!Packages/RealityKitContent/Sources/RealityKitContent/RealityKitContent.rkassets/*.usda
