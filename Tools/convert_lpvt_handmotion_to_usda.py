@@ -61,6 +61,16 @@ def matrix_position(matrix_payload: dict) -> Gf.Vec3f:
     return Gf.Vec3f(float(values[12]), float(values[13]), float(values[14]))
 
 
+def transform_position(transform_payload) -> Gf.Vec3f:
+    if isinstance(transform_payload, dict):
+        return matrix_position(transform_payload)
+    if isinstance(transform_payload, list) and len(transform_payload) >= 1:
+        translation = transform_payload[0]
+        if isinstance(translation, list) and len(translation) >= 3:
+            return Gf.Vec3f(float(translation[0]), float(translation[1]), float(translation[2]))
+    return Gf.Vec3f(0, 0, 0)
+
+
 def vec_sub(a: Gf.Vec3f, b: Gf.Vec3f) -> Gf.Vec3f:
     return Gf.Vec3f(a[0] - b[0], a[1] - b[1], a[2] - b[2])
 
@@ -114,8 +124,66 @@ def bind_material(prim: Usd.Prim, material: UsdShade.Material) -> None:
     UsdShade.MaterialBindingAPI(prim).Bind(material)
 
 
-def sorted_hands(frame: dict) -> list[dict]:
-    return sorted(frame.get("hands", []), key=lambda hand: hand.get("chirality", ""))
+COMPACT_HAND_FIELDS = {
+    "chirality": 0,
+    "is_tracked": 1,
+    "world_from_hand_anchor": 2,
+    "hand_anchor_from_joint": 3,
+    "world_from_joint": 4,
+    "manikin_from_joint": 5,
+    "landmark_from_joint": 6,
+}
+
+
+def frame_timestamp(frame) -> float:
+    if isinstance(frame, list) and frame:
+        return float(frame[0])
+    if isinstance(frame, dict):
+        return float(frame.get("timestamp", 0.0))
+    return 0.0
+
+
+def frame_hands(frame) -> list:
+    if isinstance(frame, list) and len(frame) > 1 and isinstance(frame[1], list):
+        return frame[1]
+    if isinstance(frame, dict):
+        return frame.get("hands", [])
+    return []
+
+
+def hand_chirality(hand) -> str:
+    if isinstance(hand, list) and hand:
+        return str(hand[COMPACT_HAND_FIELDS["chirality"]])
+    if isinstance(hand, dict):
+        return str(hand.get("chirality", ""))
+    return ""
+
+
+def sorted_hands(frame) -> list:
+    return sorted(frame_hands(frame), key=hand_chirality)
+
+
+def hand_joints(recording: dict, hand, coordinate_frame: str) -> dict:
+    if isinstance(hand, dict):
+        return hand.get(coordinate_frame, {})
+
+    if not isinstance(hand, list):
+        return {}
+
+    field_index = COMPACT_HAND_FIELDS.get(coordinate_frame)
+    if field_index is None or field_index >= len(hand):
+        return {}
+
+    joint_payloads = hand[field_index]
+    if not isinstance(joint_payloads, list):
+        return {}
+
+    joint_names = recording.get("joint_names", [])
+    return {
+        joint_names[index]: payload
+        for index, payload in enumerate(joint_payloads)
+        if index < len(joint_names) and payload is not None
+    }
 
 
 def build_usda(recording: dict, output_path: Path, coordinate_frame: str) -> None:
@@ -124,7 +192,7 @@ def build_usda(recording: dict, output_path: Path, coordinate_frame: str) -> Non
         raise ValueError("Recording has no frames.")
 
     fps = float(recording.get("nominal_frame_rate") or 60.0)
-    duration = float(recording.get("duration") or frames[-1].get("timestamp", 0.0))
+    duration = float(recording.get("duration") or frame_timestamp(frames[-1]))
     end_time_code = max(1, int(round(duration * fps)))
 
     stage = Usd.Stage.CreateNew(str(output_path))
@@ -149,16 +217,16 @@ def build_usda(recording: dict, output_path: Path, coordinate_frame: str) -> Non
     bone_xforms: dict[tuple[str, str, str], UsdGeom.Xform] = {}
 
     for frame in frames:
-        time_code = float(frame.get("timestamp", 0.0)) * fps
+        time_code = frame_timestamp(frame) * fps
         for hand in sorted_hands(frame):
-            chirality = safe_name(hand.get("chirality", "hand"))
+            chirality = safe_name(hand_chirality(hand) or "hand")
             hand_scope_path = f"/LPVTHandMotion/{chirality}"
             UsdGeom.Xform.Define(stage, hand_scope_path)
-            joints = hand.get(coordinate_frame, {})
+            joints = hand_joints(recording, hand, coordinate_frame)
             if not joints:
                 continue
 
-            positions = {name: matrix_position(payload) for name, payload in joints.items()}
+            positions = {name: transform_position(payload) for name, payload in joints.items()}
             material = left_material if chirality == "left" else right_material
 
             for joint_name, pos in positions.items():

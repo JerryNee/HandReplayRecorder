@@ -21,9 +21,11 @@ The simulator can build and open the app shell, but it cannot provide real hand 
 
 The exported JSON stores:
 
-- `world_from_*` transforms for immediate replay/debugging.
-- `manikin_from_joint` transforms relative to LPVT `AnchorToTrack`.
-- Optional `landmark_from_joint` transforms if the loaded asset exposes a `Landmark` entity.
+- TRS transforms as `[[translation_xyz], [rotation_xyzw]]`, not full 4x4 matrices.
+- Joint transforms in the predefined `joint_names` array order, so joint names are stored once instead of repeated on every frame.
+- `world_from_joint` data for debugging, `manikin_from_joint` data relative to LPVT `AnchorToTrack`, and optional `landmark_from_joint` data if the loaded asset exposes a `Landmark` entity.
+
+Floating-point values are truncated to 4 decimal places to keep files smaller while retaining animation-scale motion detail.
 
 Future LPVT import should attach a replay/hand rig entity under `AnchorToTrack` and drive it from `manikin_from_joint`, not from recording-time world coordinates.
 
