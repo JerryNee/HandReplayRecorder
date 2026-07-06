@@ -21,12 +21,15 @@ final class HandTrackingRecorder {
     private var sampleTask: Task<Void, Never>?
     private var playbackTask: Task<Void, Never>?
     private var liveHands: [String: LiveHandSnapshot] = [:]
+    private var handArmatures: [String: HandArmatureState] = [:]
     private var frames: [RecordedHandFrame] = []
     private var recordingStartTime: Date?
     private var recordingReference: ManikinReferenceRuntime?
     private var liveVisualizer: HandSkeletonVisualizer?
     private var replayVisualizer: HandSkeletonVisualizer?
     private let replayRoot = Entity()
+    private let handTrackingLossGraceInterval: TimeInterval = 0.25
+    private let liveHandSampleMaxAge: TimeInterval = 0.35
 
     func configureReality(root: Entity) {
         guard liveVisualizer == nil else { return }
@@ -78,6 +81,7 @@ final class HandTrackingRecorder {
         provider = nil
         isTracking = false
         liveHands.removeAll()
+        handArmatures.removeAll()
         trackedHandsSummary = "none"
         liveVisualizer?.clear()
     }
@@ -161,36 +165,57 @@ final class HandTrackingRecorder {
 
     private func handleHandAnchor(_ handAnchor: HandAnchor) {
         let chirality = handAnchor.chirality == .left ? "left" : "right"
+        let now = Date().timeIntervalSinceReferenceDate
         guard handAnchor.isTracked,
               let skeleton = handAnchor.handSkeleton
         else {
+            if let snapshot = liveHands[chirality],
+               now - snapshot.timestamp <= handTrackingLossGraceInterval {
+                refreshLiveVisualization()
+                return
+            }
+
             liveHands.removeValue(forKey: chirality)
+            handArmatures[chirality]?.reset()
             refreshLiveVisualization()
             return
         }
 
         let worldFromHandAnchor = handAnchor.originFromAnchorTransform
-        var handAnchorFromJoint: [String: simd_float4x4] = [:]
+        var observedHandAnchorFromJoint: [String: simd_float4x4] = [:]
         var worldFromJoint: [String: simd_float4x4] = [:]
 
         for jointName in HandJointCatalog.trackedJoints {
             let joint = skeleton.joint(jointName)
             guard joint.isTracked else { continue }
             let name = HandJointCatalog.name(jointName)
-            let handFromJoint = joint.anchorFromJointTransform
-            handAnchorFromJoint[name] = handFromJoint
-            worldFromJoint[name] = worldFromHandAnchor * handFromJoint
+            observedHandAnchorFromJoint[name] = joint.anchorFromJointTransform
         }
 
-        guard !worldFromJoint.isEmpty else {
+        guard !observedHandAnchorFromJoint.isEmpty else {
+            if let snapshot = liveHands[chirality],
+               now - snapshot.timestamp <= handTrackingLossGraceInterval {
+                refreshLiveVisualization()
+                return
+            }
+
             liveHands.removeValue(forKey: chirality)
+            handArmatures[chirality]?.reset()
             refreshLiveVisualization()
             return
         }
 
+        var armature = handArmatures[chirality] ?? HandArmatureState()
+        let handAnchorFromJoint = armature.resolvedJoints(from: observedHandAnchorFromJoint)
+        handArmatures[chirality] = armature
+
+        for (name, handFromJoint) in handAnchorFromJoint {
+            worldFromJoint[name] = worldFromHandAnchor * handFromJoint
+        }
+
         liveHands[chirality] = LiveHandSnapshot(
             chirality: chirality,
-            timestamp: Date().timeIntervalSinceReferenceDate,
+            timestamp: now,
             worldFromHandAnchor: worldFromHandAnchor,
             handAnchorFromJoint: handAnchorFromJoint,
             worldFromJoint: worldFromJoint
@@ -223,34 +248,38 @@ final class HandTrackingRecorder {
         let manikinFromWorld = simd_inverse(reference.worldFromAnchorToTrack)
         let landmarkFromWorld = reference.worldFromLandmark.map { simd_inverse($0) }
 
-        let hands = liveHands.values.sorted { $0.chirality < $1.chirality }.map { liveHand in
-            var manikinFromJoint: [String: Matrix4x4Value] = [:]
-            var landmarkFromJoint: [String: Matrix4x4Value] = [:]
-            var worldFromJoint: [String: Matrix4x4Value] = [:]
-            var handAnchorFromJoint: [String: Matrix4x4Value] = [:]
+        let now = Date().timeIntervalSinceReferenceDate
+        let hands = liveHands.values
+            .filter { now - $0.timestamp <= liveHandSampleMaxAge }
+            .sorted { $0.chirality < $1.chirality }
+            .map { liveHand in
+                var manikinFromJoint: [String: Matrix4x4Value] = [:]
+                var landmarkFromJoint: [String: Matrix4x4Value] = [:]
+                var worldFromJoint: [String: Matrix4x4Value] = [:]
+                var handAnchorFromJoint: [String: Matrix4x4Value] = [:]
 
-            for (jointName, matrix) in liveHand.worldFromJoint {
-                worldFromJoint[jointName] = Matrix4x4Value(matrix)
-                manikinFromJoint[jointName] = Matrix4x4Value(manikinFromWorld * matrix)
-                if let landmarkFromWorld {
-                    landmarkFromJoint[jointName] = Matrix4x4Value(landmarkFromWorld * matrix)
+                for (jointName, matrix) in liveHand.worldFromJoint {
+                    worldFromJoint[jointName] = Matrix4x4Value(matrix)
+                    manikinFromJoint[jointName] = Matrix4x4Value(manikinFromWorld * matrix)
+                    if let landmarkFromWorld {
+                        landmarkFromJoint[jointName] = Matrix4x4Value(landmarkFromWorld * matrix)
+                    }
                 }
-            }
 
-            for (jointName, matrix) in liveHand.handAnchorFromJoint {
-                handAnchorFromJoint[jointName] = Matrix4x4Value(matrix)
-            }
+                for (jointName, matrix) in liveHand.handAnchorFromJoint {
+                    handAnchorFromJoint[jointName] = Matrix4x4Value(matrix)
+                }
 
-            return RecordedHand(
-                chirality: liveHand.chirality,
-                isTracked: true,
-                worldFromHandAnchor: Matrix4x4Value(liveHand.worldFromHandAnchor),
-                handAnchorFromJoint: handAnchorFromJoint,
-                worldFromJoint: worldFromJoint,
-                manikinFromJoint: manikinFromJoint,
-                landmarkFromJoint: landmarkFromJoint.isEmpty ? nil : landmarkFromJoint
-            )
-        }
+                return RecordedHand(
+                    chirality: liveHand.chirality,
+                    isTracked: true,
+                    worldFromHandAnchor: Matrix4x4Value(liveHand.worldFromHandAnchor),
+                    handAnchorFromJoint: handAnchorFromJoint,
+                    worldFromJoint: worldFromJoint,
+                    manikinFromJoint: manikinFromJoint,
+                    landmarkFromJoint: landmarkFromJoint.isEmpty ? nil : landmarkFromJoint
+                )
+            }
 
         frames.append(RecordedHandFrame(timestamp: timestamp, hands: hands))
         recordedFrameCount = frames.count

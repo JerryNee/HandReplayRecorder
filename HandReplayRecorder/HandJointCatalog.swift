@@ -59,6 +59,12 @@ enum HandJointCatalog {
         ("littleFingerIntermediateTip", "littleFingerTip")
     ]
 
+    static let parentByJointName: [String: String] = Dictionary(uniqueKeysWithValues: bonePairs.map { ($0.1, $0.0) })
+
+    static func parentName(of jointName: String) -> String? {
+        parentByJointName[jointName]
+    }
+
     static func name(_ jointName: HandSkeleton.JointName) -> String {
         switch jointName {
         case .wrist: return "wrist"
