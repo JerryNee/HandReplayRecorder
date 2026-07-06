@@ -8,5 +8,3 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 *.lpvt-handmotion.json
-*.usda
-!Packages/RealityKitContent/Sources/RealityKitContent/RealityKitContent.rkassets/*.usda

@@ -29,19 +29,6 @@ Floating-point values are truncated to 4 decimal places to keep files smaller wh
 
 Future LPVT import should attach a replay/hand rig entity under `AnchorToTrack` and drive it from `manikin_from_joint`, not from recording-time world coordinates.
 
-## Convert JSON to USDA Preview
-
-Use the converter script for a quick animated skeleton preview:
-
-```sh
-python3 Tools/convert_lpvt_handmotion_to_usda.py /path/to/LPVT-HandMotion.lpvt-handmotion.json \
-  -o /path/to/LPVT-HandMotion.usda
-```
-
-The default export uses `manikin_from_joint`, which is the right coordinate frame for anchoring under LPVT `AnchorToTrack`.
-
-This produces animated joint spheres and bone capsules. It is not final hand-model retargeting.
-
 ## Precision
 
 This tool reproduces ARKit-estimated hand poses. It is useful for prototyping and animation reference, but it is not a millimeter-accurate medical motion-capture system.
