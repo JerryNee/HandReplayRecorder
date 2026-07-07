@@ -25,16 +25,21 @@ final class HandTrackingRecorder {
     private var recordingStartTime: Date?
     private var recordingReference: ManikinReferenceRuntime?
     private var liveVisualizer: HandSkeletonVisualizer?
-    private var replayVisualizer: HandSkeletonVisualizer?
+    private var replayVisualizer: (any HandVisualizing)?
     private let replayRoot = Entity()
 
-    func configureReality(root: Entity) {
+    func configureReality(root: Entity) async {
         guard liveVisualizer == nil else { return }
         replayRoot.name = "ReplayRoot-AnchorToTrack"
         root.addChild(replayRoot)
 
         let live = HandSkeletonVisualizer(name: "LiveHandSkeleton", color: .systemCyan)
-        let replay = HandSkeletonVisualizer(name: "ReplayHandSkeleton", coordinateRoot: replayRoot, color: .systemGreen)
+        let replay: any HandVisualizing
+        if let rig = await HandRigVisualizer(name: "ReplayHandRig", coordinateRoot: replayRoot) {
+            replay = rig
+        } else {
+            replay = HandMeshVisualizer(name: "ReplayHandMesh", coordinateRoot: replayRoot)
+        }
         root.addChild(live.entity())
         replayRoot.addChild(replay.entity())
         live.clear()
@@ -130,6 +135,9 @@ final class HandTrackingRecorder {
         replayRoot.setTransformMatrix(reference.worldFromAnchorToTrack, relativeTo: nil)
         replayRoot.isEnabled = true
 
+        // Bridge short tracking dropouts so the replayed hands do not blink.
+        let playbackFrames = HandMotionGapFiller.fill(recording.frames)
+
         playbackTask = Task { @MainActor in
             let start = Date()
             while !Task.isCancelled {
@@ -137,11 +145,11 @@ final class HandTrackingRecorder {
                 if elapsed > recording.duration {
                     break
                 }
-                updateReplay(recording: recording, time: elapsed)
+                updateReplay(frames: playbackFrames, time: elapsed)
                 try? await Task.sleep(nanoseconds: 16_666_667)
             }
             if !Task.isCancelled {
-                updateReplay(recording: recording, time: recording.duration)
+                updateReplay(frames: playbackFrames, time: recording.duration)
             }
             isPlaying = false
             statusMessage = "Playback finished."
@@ -289,8 +297,8 @@ final class HandTrackingRecorder {
         replayVisualizer?.clear()
     }
 
-    private func updateReplay(recording: HandMotionRecording, time: TimeInterval) {
-        guard let framePair = bracketingFrames(recording.frames, at: time) else {
+    private func updateReplay(frames: [RecordedHandFrame], time: TimeInterval) {
+        guard let framePair = bracketingFrames(frames, at: time) else {
             replayVisualizer?.clear()
             return
         }

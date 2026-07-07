@@ -12,7 +12,7 @@ The repo includes a minimal local `RealityKitContent` package with only the LPVT
 4. Tap `Find Manikin` and look at the LPVT simulator until the app reports that the manikin is found.
 5. Tap `Lock Manikin Anchor`.
 6. Tap `Record`, perform the hand motion, then tap `Stop`.
-7. Tap `Play` to replay the recorded virtual hand relative to the locked `AnchorToTrack`.
+7. Tap `Play` to replay the recorded virtual hand relative to the locked `AnchorToTrack`. Replay renders realistic skinned hand meshes (WebXR `generic-hand` models, Apache-2.0, see `THIRD_PARTY_LICENSES.md`) driven by the recorded joint positions; if the models fail to load it falls back to a procedural low-poly hand.
 8. Tap `Export` to write a `.lpvt-handmotion.json` file to the app Documents folder, then use `Share Export`.
 
 The simulator can build and open the app shell, but it cannot provide real hand tracking or object tracking data.

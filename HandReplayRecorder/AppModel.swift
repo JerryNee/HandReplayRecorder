@@ -40,7 +40,7 @@ final class AppModel {
 
     func configureReality(root: Entity) async {
         await manikinTracker.configureReality(root: root)
-        recorder.configureReality(root: root)
+        await recorder.configureReality(root: root)
     }
 
     func startFindingManikin() async {

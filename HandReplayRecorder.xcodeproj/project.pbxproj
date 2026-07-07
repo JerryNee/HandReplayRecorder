@@ -8,13 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		0841EBC1299A9B79FE16F077 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5004D50E77893DA5A611B5 /* ContentView.swift */; };
+		0FAF14D997F707A18A3A68C1 /* HandMotionGapFiller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 688D3FF6584C6DA05043423D /* HandMotionGapFiller.swift */; };
 		34955D83999D7B3D7EEC2592 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 819F5B618A70958D655780C5 /* RealityKitContent */; };
 		3C63F1EA4546F23B97ED8AEC /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87EF5FA07CF27E46169BEDF7 /* ImmersiveView.swift */; };
 		425D8B918169C7EA50F9A1E7 /* HandTrackingRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42EFBCD94AF378E9C17653 /* HandTrackingRecorder.swift */; };
+		4AA4F36CC1B1E24583F69C5E /* HandMeshVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEDC59D73D63C72EC1E7F5E /* HandMeshVisualizer.swift */; };
 		50123992EAE003B7EB65B810 /* JSONHandMotionExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D94397B8D13CB258253D02 /* JSONHandMotionExporter.swift */; };
+		62644C2461F6935F911113E0 /* HandVisualizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0ADC120699BD47E36E2D849 /* HandVisualizing.swift */; };
+		70DE7E7FD3FC35098D363CFC /* GenericHand_left.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 13A19727E11F945CBC256067 /* GenericHand_left.usdz */; };
 		953CFA56F7DD771D2C71D5BD /* ManikinTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708FD413A48C0804F862A8F7 /* ManikinTracker.swift */; };
+		AE295560EC9474E3DC994E3A /* HandRigVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4595946D5A7A50E74FDE65D /* HandRigVisualizer.swift */; };
 		AFE3798650E8CFE521373AA6 /* HandMotionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC04BBBCAC583F4095882856 /* HandMotionModels.swift */; };
 		B0B52B2F033F25F9E8C937A3 /* MatrixUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDF2F7A2F937F2CFF20ED2D /* MatrixUtilities.swift */; };
+		B45C17A8E2B168186B069745 /* GenericHand_right.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 49D49E332A2794B7A9206717 /* GenericHand_right.usdz */; };
 		B6B4A859AD77FC2F66200964 /* HandSkeletonVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087D1F8259B20162D9B7837D /* HandSkeletonVisualizer.swift */; };
 		DDA5BA5416D93EDCEC5767E1 /* HandJointCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D591BAD648535761CF341D9 /* HandJointCatalog.swift */; };
 		E88D3435D6BA294A174428EA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EC1867C5072A22EC68A501 /* AppModel.swift */; };
@@ -25,8 +31,12 @@
 		01D94397B8D13CB258253D02 /* JSONHandMotionExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONHandMotionExporter.swift; sourceTree = "<group>"; };
 		087D1F8259B20162D9B7837D /* HandSkeletonVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandSkeletonVisualizer.swift; sourceTree = "<group>"; };
 		12B7884EFDC7CA1B7746B320 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		13A19727E11F945CBC256067 /* GenericHand_left.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = GenericHand_left.usdz; sourceTree = "<group>"; };
+		2BEDC59D73D63C72EC1E7F5E /* HandMeshVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandMeshVisualizer.swift; sourceTree = "<group>"; };
+		49D49E332A2794B7A9206717 /* GenericHand_right.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = GenericHand_right.usdz; sourceTree = "<group>"; };
 		56EC1867C5072A22EC68A501 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		5CDF2F7A2F937F2CFF20ED2D /* MatrixUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtilities.swift; sourceTree = "<group>"; };
+		688D3FF6584C6DA05043423D /* HandMotionGapFiller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandMotionGapFiller.swift; sourceTree = "<group>"; };
 		708FD413A48C0804F862A8F7 /* ManikinTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManikinTracker.swift; sourceTree = "<group>"; };
 		87EF5FA07CF27E46169BEDF7 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
 		8D591BAD648535761CF341D9 /* HandJointCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandJointCatalog.swift; sourceTree = "<group>"; };
@@ -34,7 +44,9 @@
 		9C5004D50E77893DA5A611B5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9D42EFBCD94AF378E9C17653 /* HandTrackingRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandTrackingRecorder.swift; sourceTree = "<group>"; };
 		A32D0236F0C5DFEF11D7636A /* HandReplayRecorderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandReplayRecorderApp.swift; sourceTree = "<group>"; };
-		DEAF6E59BBDC81878C08E7F1 /* HandReplayRecorder.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HandReplayRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4595946D5A7A50E74FDE65D /* HandRigVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandRigVisualizer.swift; sourceTree = "<group>"; };
+		D0ADC120699BD47E36E2D849 /* HandVisualizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandVisualizing.swift; sourceTree = "<group>"; };
+		DEAF6E59BBDC81878C08E7F1 /* HandReplayRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandReplayRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC04BBBCAC583F4095882856 /* HandMotionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandMotionModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -64,11 +76,17 @@
 			children = (
 				56EC1867C5072A22EC68A501 /* AppModel.swift */,
 				9C5004D50E77893DA5A611B5 /* ContentView.swift */,
+				13A19727E11F945CBC256067 /* GenericHand_left.usdz */,
+				49D49E332A2794B7A9206717 /* GenericHand_right.usdz */,
 				8D591BAD648535761CF341D9 /* HandJointCatalog.swift */,
+				2BEDC59D73D63C72EC1E7F5E /* HandMeshVisualizer.swift */,
+				688D3FF6584C6DA05043423D /* HandMotionGapFiller.swift */,
 				EC04BBBCAC583F4095882856 /* HandMotionModels.swift */,
 				A32D0236F0C5DFEF11D7636A /* HandReplayRecorderApp.swift */,
+				A4595946D5A7A50E74FDE65D /* HandRigVisualizer.swift */,
 				087D1F8259B20162D9B7837D /* HandSkeletonVisualizer.swift */,
 				9D42EFBCD94AF378E9C17653 /* HandTrackingRecorder.swift */,
+				D0ADC120699BD47E36E2D849 /* HandVisualizing.swift */,
 				87EF5FA07CF27E46169BEDF7 /* ImmersiveView.swift */,
 				12B7884EFDC7CA1B7746B320 /* Info.plist */,
 				01D94397B8D13CB258253D02 /* JSONHandMotionExporter.swift */,
@@ -102,6 +120,7 @@
 			buildConfigurationList = 4440DB5FC914D96F709694FA /* Build configuration list for PBXNativeTarget "HandReplayRecorder" */;
 			buildPhases = (
 				4A6F5B14A0E75E34A9318DDE /* Sources */,
+				3308859F2BB2C8BC7DCF9572 /* Resources */,
 				6C4B6F0DC3CAE0AF94A42ECA /* Frameworks */,
 			);
 			buildRules = (
@@ -124,11 +143,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-					17713282E5454EFDCD8D3AB8 = {
-						DevelopmentTeam = "";
-					};
-				};
 			};
 			buildConfigurationList = 503EBFA778B2AC9D1796242B /* Build configuration list for PBXProject "HandReplayRecorder" */;
 			developmentRegion = en;
@@ -152,6 +166,18 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		3308859F2BB2C8BC7DCF9572 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70DE7E7FD3FC35098D363CFC /* GenericHand_left.usdz in Resources */,
+				B45C17A8E2B168186B069745 /* GenericHand_right.usdz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4A6F5B14A0E75E34A9318DDE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -160,10 +186,14 @@
 				E88D3435D6BA294A174428EA /* AppModel.swift in Sources */,
 				0841EBC1299A9B79FE16F077 /* ContentView.swift in Sources */,
 				DDA5BA5416D93EDCEC5767E1 /* HandJointCatalog.swift in Sources */,
+				4AA4F36CC1B1E24583F69C5E /* HandMeshVisualizer.swift in Sources */,
+				0FAF14D997F707A18A3A68C1 /* HandMotionGapFiller.swift in Sources */,
 				AFE3798650E8CFE521373AA6 /* HandMotionModels.swift in Sources */,
 				E90D47CF5E133711CEEF2A92 /* HandReplayRecorderApp.swift in Sources */,
+				AE295560EC9474E3DC994E3A /* HandRigVisualizer.swift in Sources */,
 				B6B4A859AD77FC2F66200964 /* HandSkeletonVisualizer.swift in Sources */,
 				425D8B918169C7EA50F9A1E7 /* HandTrackingRecorder.swift in Sources */,
+				62644C2461F6935F911113E0 /* HandVisualizing.swift in Sources */,
 				3C63F1EA4546F23B97ED8AEC /* ImmersiveView.swift in Sources */,
 				50123992EAE003B7EB65B810 /* JSONHandMotionExporter.swift in Sources */,
 				953CFA56F7DD771D2C71D5BD /* ManikinTracker.swift in Sources */,
@@ -235,6 +265,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 58E8A7GUH4;
 				INFOPLIST_FILE = HandReplayRecorder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -251,6 +282,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 58E8A7GUH4;
 				INFOPLIST_FILE = HandReplayRecorder/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
