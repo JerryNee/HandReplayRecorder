@@ -17,6 +17,8 @@
 		AFE3798650E8CFE521373AA6 /* HandMotionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC04BBBCAC583F4095882856 /* HandMotionModels.swift */; };
 		B0B52B2F033F25F9E8C937A3 /* MatrixUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDF2F7A2F937F2CFF20ED2D /* MatrixUtilities.swift */; };
 		B6B4A859AD77FC2F66200964 /* HandSkeletonVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087D1F8259B20162D9B7837D /* HandSkeletonVisualizer.swift */; };
+		C1A2B3C4D5E6F708192A3B4C /* RiggedHandReplayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F708192A3B4D /* RiggedHandReplayer.swift */; };
+		C1A2B3C4D5E6F708192A3B4E /* RiggedHandJointMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A2B3C4D5E6F708192A3B4F /* RiggedHandJointMapping.swift */; };
 		DDA5BA5416D93EDCEC5767E1 /* HandJointCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D591BAD648535761CF341D9 /* HandJointCatalog.swift */; };
 		E88D3435D6BA294A174428EA /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EC1867C5072A22EC68A501 /* AppModel.swift */; };
 		E90D47CF5E133711CEEF2A92 /* HandReplayRecorderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32D0236F0C5DFEF11D7636A /* HandReplayRecorderApp.swift */; };
@@ -38,6 +40,8 @@
 		A32D0236F0C5DFEF11D7636A /* HandReplayRecorderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandReplayRecorderApp.swift; sourceTree = "<group>"; };
 		DEAF6E59BBDC81878C08E7F1 /* HandReplayRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandReplayRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC04BBBCAC583F4095882856 /* HandMotionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandMotionModels.swift; sourceTree = "<group>"; };
+		C1A2B3C4D5E6F708192A3B4D /* RiggedHandReplayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiggedHandReplayer.swift; sourceTree = "<group>"; };
+		C1A2B3C4D5E6F708192A3B4F /* RiggedHandJointMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiggedHandJointMapping.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 				01D94397B8D13CB258253D02 /* JSONHandMotionExporter.swift */,
 				708FD413A48C0804F862A8F7 /* ManikinTracker.swift */,
 				5CDF2F7A2F937F2CFF20ED2D /* MatrixUtilities.swift */,
+				C1A2B3C4D5E6F708192A3B4F /* RiggedHandJointMapping.swift */,
+				C1A2B3C4D5E6F708192A3B4D /* RiggedHandReplayer.swift */,
 			);
 			path = HandReplayRecorder;
 			sourceTree = "<group>";
@@ -167,6 +173,8 @@
 				50123992EAE003B7EB65B810 /* JSONHandMotionExporter.swift in Sources */,
 				953CFA56F7DD771D2C71D5BD /* ManikinTracker.swift in Sources */,
 				B0B52B2F033F25F9E8C937A3 /* MatrixUtilities.swift in Sources */,
+				C1A2B3C4D5E6F708192A3B4C /* RiggedHandReplayer.swift in Sources */,
+				C1A2B3C4D5E6F708192A3B4E /* RiggedHandJointMapping.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

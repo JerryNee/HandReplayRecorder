@@ -12,7 +12,7 @@ The repo includes a minimal local `RealityKitContent` package with only the LPVT
 4. Tap `Find Manikin` and look at the LPVT simulator until the app reports that the manikin is found.
 5. Tap `Lock Manikin Anchor`.
 6. Tap `Record`, perform the hand motion, then tap `Stop`.
-7. Tap `Play` to replay the recorded virtual hand relative to the locked `AnchorToTrack`.
+7. Tap `Play` to replay the recorded motion on the rigged hand mesh relative to the locked `AnchorToTrack`.
 8. Tap `Export` to write a `.lpvt-handmotion.json` file to the app Documents folder, then use `Share Export`.
 
 The simulator can build and open the app shell, but it cannot provide real hand tracking or object tracking data.
@@ -26,6 +26,8 @@ The exported JSON stores:
 - `world_from_joint` data for debugging, `manikin_from_joint` data relative to LPVT `AnchorToTrack`, and optional `landmark_from_joint` data if the loaded asset exposes a `Landmark` entity.
 
 Floating-point values are truncated to 4 decimal places to keep files smaller while retaining animation-scale motion detail.
+
+Playback drives `Packages/RealityKitContent/.../RiggedHand.usdc` using RealityKit `SkeletalPosesComponent`, retargeting recorded ARKit joint transforms onto the Blender-authored hand skeleton.
 
 Future LPVT import should attach a replay/hand rig entity under `AnchorToTrack` and drive it from `manikin_from_joint`, not from recording-time world coordinates.
 

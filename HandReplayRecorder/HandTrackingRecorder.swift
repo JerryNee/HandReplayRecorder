@@ -27,11 +27,12 @@ final class HandTrackingRecorder {
     private var recordingReference: ManikinReferenceRuntime?
     private var liveVisualizer: HandSkeletonVisualizer?
     private var replayVisualizer: HandSkeletonVisualizer?
+    private var riggedHandReplayer: RiggedHandReplayer?
     private let replayRoot = Entity()
     private let handTrackingLossGraceInterval: TimeInterval = 0.25
     private let liveHandSampleMaxAge: TimeInterval = 0.35
 
-    func configureReality(root: Entity) {
+    func configureReality(root: Entity) async {
         guard liveVisualizer == nil else { return }
         replayRoot.name = "ReplayRoot-AnchorToTrack"
         root.addChild(replayRoot)
@@ -44,6 +45,12 @@ final class HandTrackingRecorder {
         replay.clear()
         liveVisualizer = live
         replayVisualizer = replay
+        replayVisualizer?.entity().isEnabled = false
+
+        let riggedReplayer = RiggedHandReplayer()
+        replayRoot.addChild(riggedReplayer.entity())
+        await riggedReplayer.load()
+        riggedHandReplayer = riggedReplayer
     }
 
     func startTracking() async throws {
@@ -130,7 +137,7 @@ final class HandTrackingRecorder {
 
         stopPlayback()
         isPlaying = true
-        statusMessage = "Playing manikin-local hand replay..."
+        statusMessage = "Playing manikin-local hand replay with rigged hand mesh..."
         replayRoot.setTransformMatrix(reference.worldFromAnchorToTrack, relativeTo: nil)
         replayRoot.isEnabled = true
 
@@ -160,6 +167,7 @@ final class HandTrackingRecorder {
         recordingDuration = 0
         recordingReference = nil
         replayVisualizer?.clear()
+        riggedHandReplayer?.clear()
         statusMessage = "Cleared recording."
     }
 
@@ -316,16 +324,24 @@ final class HandTrackingRecorder {
         playbackTask = nil
         isPlaying = false
         replayVisualizer?.clear()
+        riggedHandReplayer?.clear()
     }
 
     private func updateReplay(recording: HandMotionRecording, time: TimeInterval) {
         guard let framePair = bracketingFrames(recording.frames, at: time) else {
             replayVisualizer?.clear()
+            riggedHandReplayer?.clear()
             return
         }
 
         let hands = interpolatedHands(lhs: framePair.0, rhs: framePair.1, time: time)
-        replayVisualizer?.update(hands: hands, relativeTo: replayRoot)
+        if let rightHand = hands["right"] {
+            riggedHandReplayer?.update(joints: rightHand, relativeTo: replayRoot)
+        } else if let firstHand = hands.values.first {
+            riggedHandReplayer?.update(joints: firstHand, relativeTo: replayRoot)
+        } else {
+            riggedHandReplayer?.clear()
+        }
     }
 
     private func bracketingFrames(_ frames: [RecordedHandFrame], at time: TimeInterval) -> (RecordedHandFrame, RecordedHandFrame)? {
@@ -363,7 +379,7 @@ final class HandTrackingRecorder {
                       let rhsMatrix = right.manikinFromJoint[jointName]?.matrix ?? left.manikinFromJoint[jointName]?.matrix
                 else { continue }
 
-                joints[jointName] = interpolatedTranslationMatrix(lhsMatrix, rhsMatrix, t: factor)
+                joints[jointName] = interpolatedMatrix(lhsMatrix, rhsMatrix, t: factor)
             }
             output[hand] = joints
         }

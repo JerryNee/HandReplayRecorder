@@ -16,7 +16,19 @@ func interpolatedTranslationMatrix(
     _ rhs: simd_float4x4,
     t: Float
 ) -> simd_float4x4 {
-    translationMatrix(simd_mix(position(from: lhs), position(from: rhs), SIMD3<Float>(repeating: t)))
+    interpolatedMatrix(lhs, rhs, t: t)
+}
+
+func interpolatedMatrix(
+    _ lhs: simd_float4x4,
+    _ rhs: simd_float4x4,
+    t: Float
+) -> simd_float4x4 {
+    let translation = simd_mix(position(from: lhs), position(from: rhs), SIMD3<Float>(repeating: t))
+    let rotation = simd_slerp(simd_quatf(lhs), simd_quatf(rhs), t)
+    var matrix = simd_float4x4(rotation)
+    matrix.columns.3 = SIMD4<Float>(translation.x, translation.y, translation.z, 1)
+    return matrix
 }
 
 func clampedInterpolationFactor(
