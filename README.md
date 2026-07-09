@@ -19,11 +19,14 @@ The simulator can build and open the app shell, but it cannot provide real hand 
 
 ## Export
 
-The exported JSON stores:
+The exported JSON (schema v2) stores:
 
-- `world_from_*` transforms for immediate replay/debugging.
-- `manikin_from_joint` transforms relative to LPVT `AnchorToTrack`.
-- Optional `landmark_from_joint` transforms if the loaded asset exposes a `Landmark` entity.
+- `manikin_from_joint` only — the LPVT-local joint positions needed for replay and import.
+- Joint positions as compact `[x, y, z]` arrays in the shared `joint_names` order (0.1 mm precision).
+- Frames as `[timestamp, hands]` arrays instead of repeated per-joint dictionaries.
+- Adaptive keyframe thinning on export: static poses collapse to fewer frames, but motion is preserved at up to 60 Hz and never sparser than 40 Hz equivalent spacing.
+
+In-app recording and playback still use the full 60 Hz capture. Thinning applies only to the exported file, so replay smoothness in the app is unchanged.
 
 Future LPVT import should attach a replay/hand rig entity under `AnchorToTrack` and drive it from `manikin_from_joint`, not from recording-time world coordinates.
 

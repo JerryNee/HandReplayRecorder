@@ -54,11 +54,60 @@ def safe_name(value: str) -> str:
     return cleaned
 
 
-def matrix_position(matrix_payload: dict) -> Gf.Vec3f:
-    values = matrix_payload.get("values", [])
-    if len(values) != 16:
-        return Gf.Vec3f(0, 0, 0)
-    return Gf.Vec3f(float(values[12]), float(values[13]), float(values[14]))
+def matrix_position(matrix_payload) -> Gf.Vec3f:
+    if isinstance(matrix_payload, list):
+        if not matrix_payload:
+            return Gf.Vec3f(0, 0, 0)
+        if len(matrix_payload) == 1 and isinstance(matrix_payload[0], list):
+            translation = matrix_payload[0]
+            return Gf.Vec3f(float(translation[0]), float(translation[1]), float(translation[2]))
+        if len(matrix_payload) == 3 and all(isinstance(value, (int, float)) for value in matrix_payload):
+            return Gf.Vec3f(float(matrix_payload[0]), float(matrix_payload[1]), float(matrix_payload[2]))
+    if isinstance(matrix_payload, dict):
+        values = matrix_payload.get("values", [])
+        if len(values) != 16:
+            return Gf.Vec3f(0, 0, 0)
+        return Gf.Vec3f(float(values[12]), float(values[13]), float(values[14]))
+    return Gf.Vec3f(0, 0, 0)
+
+
+def normalize_frames(recording: dict) -> list[dict]:
+    frames = recording.get("frames", [])
+    if not frames:
+        return []
+
+    joint_names = recording.get("joint_names", [])
+    schema_version = int(recording.get("schema_version") or 1)
+    first_frame = frames[0]
+
+    if schema_version >= 2 and isinstance(first_frame, list):
+        normalized = []
+        for frame in frames:
+            timestamp = float(frame[0])
+            hands = []
+            for hand in frame[1]:
+                chirality = hand[0]
+                is_tracked = bool(hand[1])
+                joint_values = hand[2]
+                manikin_from_joint = {}
+                for index, joint_name in enumerate(joint_names):
+                    if index >= len(joint_values):
+                        continue
+                    payload = joint_values[index]
+                    if payload is None:
+                        continue
+                    manikin_from_joint[joint_name] = payload
+                hands.append(
+                    {
+                        "chirality": chirality,
+                        "is_tracked": is_tracked,
+                        "manikin_from_joint": manikin_from_joint,
+                    }
+                )
+            normalized.append({"timestamp": timestamp, "hands": hands})
+        return normalized
+
+    return frames
 
 
 def vec_sub(a: Gf.Vec3f, b: Gf.Vec3f) -> Gf.Vec3f:
@@ -119,7 +168,7 @@ def sorted_hands(frame: dict) -> list[dict]:
 
 
 def build_usda(recording: dict, output_path: Path, coordinate_frame: str) -> None:
-    frames = recording.get("frames", [])
+    frames = normalize_frames(recording)
     if not frames:
         raise ValueError("Recording has no frames.")
 
